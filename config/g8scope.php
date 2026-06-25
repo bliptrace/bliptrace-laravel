@@ -22,6 +22,14 @@ return [
     // never affects the monitored app.
     'timeout' => env('G8SCOPE_TIMEOUT', 3),
 
+    // Transport retry: when the ingest API is briefly down or shedding (429), the
+    // send is retried with exponential backoff + jitter. Safe because the same
+    // event_id is replayed and the API dedupes on it (no duplicate occurrences).
+    // Kept to a small budget so it only runs in the deferred (after-response) send.
+    'max_retries' => env('G8SCOPE_MAX_RETRIES', 2),
+    'retry_base_ms' => env('G8SCOPE_RETRY_BASE_MS', 100),
+    'retry_cap_ms' => env('G8SCOPE_RETRY_CAP_MS', 2000),
+
     // Cap the number of stack frames + the message length sent.
     'max_frames' => env('G8SCOPE_MAX_FRAMES', 30),
     'max_message' => env('G8SCOPE_MAX_MESSAGE', 2000),
