@@ -1,5 +1,12 @@
 <?php
 
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Auth\AuthenticationException;
+use Illuminate\Session\TokenMismatchException;
+use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+
 return [
     // Master kill switch — set false to disable all capture.
     'enabled' => env('G8SCOPE_ENABLED', true),
@@ -21,12 +28,18 @@ return [
 
     // Exceptions never reported (noise). Add your own.
     'ignore_exceptions' => [
-        Illuminate\Auth\AuthenticationException::class,
-        Illuminate\Auth\Access\AuthorizationException::class,
-        Illuminate\Validation\ValidationException::class,
-        Illuminate\Session\TokenMismatchException::class,
-        Symfony\Component\HttpKernel\Exception\NotFoundHttpException::class,
-        Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException::class,
+        AuthenticationException::class,
+        AuthorizationException::class,
+        ValidationException::class,
+        TokenMismatchException::class,
+        NotFoundHttpException::class,
+        MethodNotAllowedHttpException::class,
+    ],
+
+    // Optional UI settings page (published only when Requirements::uiAvailable()).
+    'ui' => [
+        'path' => env('G8SCOPE_UI_PATH', 'g8scope/settings'),
+        'middleware' => ['web', 'auth'],
     ],
 
     // Request context keys redacted before sending (client-side scrub).

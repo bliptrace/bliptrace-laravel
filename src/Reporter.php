@@ -27,7 +27,7 @@ final class Reporter
 
             // Ship after the response so the request is never blocked.
             $this->app->terminating(fn () => $this->client->sendEnvelope($envelope));
-        } catch (\Throwable) {
+        } catch (Throwable) {
             // Never break the app.
         }
     }

@@ -4,17 +4,18 @@ declare(strict_types=1);
 
 namespace G8Scope\Laravel\Facades;
 
+use G8Scope\Laravel\Reporter;
 use Illuminate\Support\Facades\Facade;
 
 /**
  * @method static void capture(\Throwable $e)
  *
- * @see \G8Scope\Laravel\Reporter
+ * @see Reporter
  */
 class G8Scope extends Facade
 {
     protected static function getFacadeAccessor(): string
     {
-        return \G8Scope\Laravel\Reporter::class;
+        return Reporter::class;
     }
 }

@@ -39,3 +39,21 @@ attached automatically.
 ---
 
 _Developers Hub Sdn Bhd · g8scope/laravel_
+
+## UI settings page (optional, version-gated)
+
+When the host app meets every requirement — **Laravel 11+, Livewire, Flux, and
+`spatie/laravel-settings`** — the SDK publishes a settings page at `/g8scope/settings`
+(configurable via `g8scope.ui.path`) so you can configure capture from the UI instead of
+`.env`. It follows the same conventions as a Kickoff settings page.
+
+```bash
+php artisan vendor:publish --tag="g8scope-settings-migrations"
+php artisan migrate           # seeds the g8scope settings group (from your .env defaults)
+```
+
+Config precedence is **DB settings → config → env defaults**, so UI changes take effect live.
+
+If the requirements are **not** met, nothing UI-related is published — the SDK runs **headless**
+(captures via config/env) and exposes no route, page, or migration. Inspect the gate with
+`G8Scope\Laravel\Support\Requirements::report()`.
