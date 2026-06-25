@@ -32,6 +32,20 @@ final class RequestContext
                 ->all(),
         ];
 
+        // Matched route name/action (envelope 1.1), best-effort.
+        if (method_exists($request, 'route') && ($route = $request->route()) !== null) {
+            $name = method_exists($route, 'getName') ? $route->getName() : null;
+            $action = method_exists($route, 'getActionName') ? $route->getActionName() : null;
+            if ($name || $action) {
+                $context['request']['route'] = $name ?: $action;
+            }
+        }
+
+        // Query-string params (envelope 1.1). Scrubbed downstream like other context.
+        if (method_exists($request, 'query') && ($query = $request->query()) !== []) {
+            $context['request']['query'] = $query;
+        }
+
         if ($user = $request->user()) {
             $context['user'] = ['id' => (string) $user->getAuthIdentifier()];
         }
