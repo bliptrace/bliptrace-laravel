@@ -1,0 +1,64 @@
+{
+    "name": "g8scope/laravel",
+    "version": "1.0.0",
+    "description": "Laravel SDK for g8scope \u2014 auto-captures exceptions and ships them to the ingest API. Thin adapter over g8scope/php.",
+    "keywords": [
+        "laravel",
+        "g8scope",
+        "error-tracking",
+        "observability",
+        "sdk"
+    ],
+    "license": "MIT",
+    "require": {
+        "php": "^8.2",
+        "g8scope/php": "*",
+        "illuminate/support": "^11.0|^12.0|^13.0"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^9.0|^10.0",
+        "pestphp/pest": "^3.0",
+        "laravel/pint": "^1.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "G8Scope\\Laravel\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "G8Scope\\Laravel\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "test": "vendor/bin/pest",
+        "lint": "vendor/bin/pint"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "G8Scope\\Laravel\\G8ScopeServiceProvider"
+            ],
+            "aliases": {
+                "G8Scope": "G8Scope\\Laravel\\Facades\\G8Scope"
+            }
+        }
+    },
+    "repositories": [
+        {
+            "type": "path",
+            "url": "../g8scope-php",
+            "options": {
+                "symlink": true
+            }
+        }
+    ],
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
