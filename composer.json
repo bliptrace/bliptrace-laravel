@@ -1,6 +1,5 @@
 {
     "name": "g8scope/laravel",
-    "version": "1.0.0",
     "description": "Laravel SDK for g8scope \u2014 auto-captures exceptions and ships them to the ingest API. Thin adapter over g8scope/php.",
     "keywords": [
         "laravel",
