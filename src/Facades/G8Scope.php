@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static void capture(\Throwable $e)
  *
  * @see Reporter
+ * @deprecated since 1.2, removed in 2.0 — use the Bliptrace facade.
  */
 class G8Scope extends Facade
 {

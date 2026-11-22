@@ -36,12 +36,12 @@ it('defers the send until the app terminates', function (): void {
 });
 
 it('publishes a config + registers the provider client', function (): void {
-    expect(config('g8scope.endpoint'))->not->toBeNull()
+    expect(config('bliptrace.endpoint'))->not->toBeNull()
         ->and(app(Client::class))->toBeInstanceOf(Client::class);
 });
 
 it('respects the master kill switch', function (): void {
-    config()->set('g8scope.enabled', false);
+    config()->set('bliptrace.enabled', false);
     // rebuild client with new config
     app()->forgetInstance(Client::class);
     $t = new FakeTransport;

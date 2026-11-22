@@ -7,7 +7,7 @@ use Illuminate\Auth\GenericUser;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
 
-$on = ['g8scope.ui.enabled' => true, 'g8scope.settings.enabled' => true];
+$on = ['bliptrace.ui.enabled' => true, 'bliptrace.settings.enabled' => true];
 
 it('does not register the page by default, even with every UI dependency present', function (): void {
     rebootSdk();
@@ -15,12 +15,12 @@ it('does not register the page by default, even with every UI dependency present
 });
 
 it('does not register the page without the DB settings layer', function (): void {
-    rebootSdk(['g8scope.ui.enabled' => true]);
+    rebootSdk(['bliptrace.ui.enabled' => true]);
     expect(Route::has('g8scope.settings'))->toBeFalse();
 });
 
 it('registers the page behind the configured gate when opted in', function () use ($on): void {
-    rebootSdk([...$on, 'g8scope.ui.gate' => 'edit-error-tracking']);
+    rebootSdk([...$on, 'bliptrace.ui.gate' => 'edit-error-tracking']);
 
     expect(Route::has('g8scope.settings'))->toBeTrue()
         ->and(Route::getRoutes()->getByName('g8scope.settings')->gatherMiddleware())

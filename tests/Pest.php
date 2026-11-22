@@ -9,7 +9,7 @@ use G8Scope\Php\Config;
 
 uses(TestCase::class)->in(__DIR__);
 
-/** Re-run the SDK provider after a test changed g8scope.* config. */
+/** Re-run the SDK provider after a test changed bliptrace.* config. */
 function rebootSdk(array $config = []): void
 {
     config()->set($config);

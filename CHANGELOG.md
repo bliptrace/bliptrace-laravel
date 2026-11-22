@@ -6,6 +6,31 @@ format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the 
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-11-23
+
+### Added
+- `BLIPTRACE_*` environment variables for every setting: `BLIPTRACE_KEY`, `BLIPTRACE_ENDPOINT`,
+  `BLIPTRACE_ENABLED`, `BLIPTRACE_ENVIRONMENT`, `BLIPTRACE_RELEASE`, `BLIPTRACE_SAMPLE_RATE`,
+  `BLIPTRACE_TIMEOUT`, `BLIPTRACE_MAX_RETRIES`, `BLIPTRACE_RETRY_BASE_MS`, `BLIPTRACE_RETRY_CAP_MS`,
+  `BLIPTRACE_MAX_FRAMES`, `BLIPTRACE_MAX_MESSAGE`, `BLIPTRACE_DB_SETTINGS`, `BLIPTRACE_UI_ENABLED`,
+  `BLIPTRACE_UI_PATH`, `BLIPTRACE_UI_GATE`.
+- `Bliptrace` facade (`G8Scope\Laravel\Facades\Bliptrace`) and alias.
+- `bliptrace-config` and `bliptrace-settings-migrations` publish tags.
+
+### Changed
+- Config file and key renamed `config/g8scope.php` / `config('g8scope')` →
+  `config/bliptrace.php` / `config('bliptrace')`.
+- Requires `bliptrace/php: ^1.2`.
+
+### Deprecated (removed in 2.0)
+- `G8SCOPE_*` env names: still read when the matching `BLIPTRACE_*` name is unset.
+- A published `config/g8scope.php`: still merged over the defaults when `config/bliptrace.php` is
+  not published; `config('g8scope')` mirrors `config('bliptrace')`.
+- `G8Scope` facade alias and the `g8scope-config` / `g8scope-settings-migrations` tags.
+
+Unchanged: the `G8Scope\Laravel` namespace, the `g8scope` settings group, the `/g8scope/settings`
+route and `manage-g8scope` gate defaults, and the envelope `sdk.name`.
+
 ## [1.1.0] - 2026-11-23
 
 ### Added
@@ -41,6 +66,7 @@ format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the 
 - Initial release as `g8scope/laravel`: exception-handler hook, deferred send, request context,
   facade, optional Livewire/Flux settings page.
 
-[Unreleased]: https://github.com/bliptrace/bliptrace-laravel/compare/1.1.0...HEAD
+[Unreleased]: https://github.com/bliptrace/bliptrace-laravel/compare/1.2.0...HEAD
+[1.2.0]: https://github.com/bliptrace/bliptrace-laravel/compare/1.1.0...1.2.0
 [1.1.0]: https://github.com/bliptrace/bliptrace-laravel/compare/1.0.0...1.1.0
 [1.0.0]: https://github.com/bliptrace/bliptrace-laravel/releases/tag/1.0.0

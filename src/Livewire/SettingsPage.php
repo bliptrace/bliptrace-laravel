@@ -25,10 +25,10 @@ class SettingsPage extends Component
 
     public string $release = '';
 
-    /** Ability that guards the page (config g8scope.ui.gate). */
+    /** Ability that guards the page (config bliptrace.ui.gate). */
     public static function ability(): string
     {
-        return (string) config('g8scope.ui.gate', 'manage-g8scope');
+        return (string) config('bliptrace.ui.gate', 'manage-g8scope');
     }
 
     public function mount(): void

@@ -19,9 +19,9 @@ class G8ScopeServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        $this->mergeConfigFrom(__DIR__.'/../config/g8scope.php', 'g8scope');
+        $this->mergeConfig();
 
-        // DB-backed settings (opt-in: g8scope.settings.enabled) — register the
+        // DB-backed settings (opt-in: bliptrace.settings.enabled) — register the
         // settings class + its migrations path so `php artisan migrate` seeds the
         // group. Off by default: the SDK stays on config/env.
         if ($this->dbSettingsEnabled()) {
@@ -44,9 +44,14 @@ class G8ScopeServiceProvider extends ServiceProvider
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'g8scope');
 
         if ($this->app->runningInConsole()) {
-            $this->publishes([__DIR__.'/../config/g8scope.php' => config_path('g8scope.php')], 'g8scope-config');
+            // g8scope-* tags are deprecated aliases (removed in 2.0); both publish config/bliptrace.php.
+            $config = [__DIR__.'/../config/bliptrace.php' => config_path('bliptrace.php')];
+            $this->publishes($config, 'bliptrace-config');
+            $this->publishes($config, 'g8scope-config');
             if (Requirements::settingsAvailable()) {
-                $this->publishes([__DIR__.'/../database/settings' => base_path('database/settings')], 'g8scope-settings-migrations');
+                $migrations = [__DIR__.'/../database/settings' => base_path('database/settings')];
+                $this->publishes($migrations, 'bliptrace-settings-migrations');
+                $this->publishes($migrations, 'g8scope-settings-migrations');
             }
         }
 
@@ -54,9 +59,34 @@ class G8ScopeServiceProvider extends ServiceProvider
         $this->registerUi();
     }
 
+    /**
+     * Merge package defaults under `bliptrace`. An app that still has only a
+     * published config/g8scope.php (deprecated, removed in 2.0) keeps it: its
+     * values are layered over the defaults. A published config/bliptrace.php wins.
+     * `g8scope` is mirrored to the result so old config('g8scope.*') reads work.
+     */
+    private function mergeConfig(): void
+    {
+        if ($this->app->configurationIsCached()) {
+            return;
+        }
+
+        $config = $this->app['config'];
+        $published = $config->get('bliptrace');
+        $legacy = $config->get('g8scope');
+        $config->set('bliptrace', (array) $published);
+
+        $this->mergeConfigFrom(__DIR__.'/../config/bliptrace.php', 'bliptrace');
+
+        if (empty($published) && is_array($legacy) && $legacy !== []) {
+            $config->set('bliptrace', array_merge($config->get('bliptrace'), $legacy));
+        }
+        $config->set('g8scope', $config->get('bliptrace'));
+    }
+
     private function dbSettingsEnabled(): bool
     {
-        return (bool) $this->app['config']->get('g8scope.settings.enabled', false)
+        return (bool) $this->app['config']->get('bliptrace.settings.enabled', false)
             && Requirements::settingsAvailable();
     }
 
@@ -64,11 +94,11 @@ class G8ScopeServiceProvider extends ServiceProvider
      * Resolve config: values actually stored in the DB settings group (opt-in)
      * override config/env. Read from the repository, not the settings class —
      * spatie fills an unmigrated group with the class defaults, which would
-     * silently override G8SCOPE_* env.
+     * silently override BLIPTRACE_* env.
      */
     private function buildConfig(): Config
     {
-        $c = (array) $this->app['config']->get('g8scope', []);
+        $c = (array) $this->app['config']->get('bliptrace', []);
 
         if ($this->dbSettingsEnabled()) {
             try {
@@ -104,13 +134,13 @@ class G8ScopeServiceProvider extends ServiceProvider
     }
 
     /**
-     * Register the settings UI route — opt-in (g8scope.ui.enabled + DB settings),
+     * Register the settings UI route — opt-in (bliptrace.ui.enabled + DB settings),
      * only when the host meets every requirement, and always behind the
-     * g8scope.ui.gate ability (undefined ability = denied).
+     * bliptrace.ui.gate ability (undefined ability = denied).
      */
     private function registerUi(): void
     {
-        $ui = (array) $this->app['config']->get('g8scope.ui', []);
+        $ui = (array) $this->app['config']->get('bliptrace.ui', []);
 
         if (! ($ui['enabled'] ?? false) || ! $this->dbSettingsEnabled() || ! Requirements::uiAvailable($this->app)) {
             return;
