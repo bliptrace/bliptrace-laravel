@@ -12,6 +12,7 @@ use G8Scope\Php\Config;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
+use Spatie\LaravelSettings\Factories\SettingsRepositoryFactory;
 use Throwable;
 
 class G8ScopeServiceProvider extends ServiceProvider
@@ -20,10 +21,10 @@ class G8ScopeServiceProvider extends ServiceProvider
     {
         $this->mergeConfigFrom(__DIR__.'/../config/g8scope.php', 'g8scope');
 
-        // DB-backed settings (kickoff-style) — register the settings class + its
-        // migrations path so `php artisan migrate` seeds the group. Only when
-        // spatie/laravel-settings is installed; otherwise the SDK stays headless.
-        if (Requirements::settingsAvailable()) {
+        // DB-backed settings (opt-in: g8scope.settings.enabled) — register the
+        // settings class + its migrations path so `php artisan migrate` seeds the
+        // group. Off by default: the SDK stays on config/env.
+        if ($this->dbSettingsEnabled()) {
             $this->app['config']->set('settings.settings', array_merge(
                 (array) $this->app['config']->get('settings.settings', []),
                 [G8ScopeSettings::class],
@@ -53,21 +54,33 @@ class G8ScopeServiceProvider extends ServiceProvider
         $this->registerUi();
     }
 
-    /** Resolve config with precedence: DB settings → config → env defaults. */
+    private function dbSettingsEnabled(): bool
+    {
+        return (bool) $this->app['config']->get('g8scope.settings.enabled', false)
+            && Requirements::settingsAvailable();
+    }
+
+    /**
+     * Resolve config: values actually stored in the DB settings group (opt-in)
+     * override config/env. Read from the repository, not the settings class —
+     * spatie fills an unmigrated group with the class defaults, which would
+     * silently override G8SCOPE_* env.
+     */
     private function buildConfig(): Config
     {
         $c = (array) $this->app['config']->get('g8scope', []);
 
-        if (Requirements::settingsAvailable()) {
+        if ($this->dbSettingsEnabled()) {
             try {
-                $s = $this->app->make(G8ScopeSettings::class);
-                $c['enabled'] = $s->enabled;
-                $c['key'] = $s->key ?: ($c['key'] ?? null);
-                $c['endpoint'] = $s->endpoint ?: ($c['endpoint'] ?? 'https://ingest.scope.g8suite.com');
-                $c['environment'] = $s->environment ?: ($c['environment'] ?? 'production');
-                $c['release'] = $s->release ?: ($c['release'] ?? null);
+                $stored = SettingsRepositoryFactory::create(G8ScopeSettings::repository())
+                    ->getPropertiesInGroup(G8ScopeSettings::group());
+                foreach (['enabled', 'key', 'endpoint', 'environment', 'release'] as $name) {
+                    if (isset($stored[$name]) && $stored[$name] !== '') {
+                        $c[$name] = $stored[$name];
+                    }
+                }
             } catch (Throwable) {
-                // Settings group not migrated yet → fall back to config/env.
+                // Settings table missing / DB down → config/env.
             }
         }
 
@@ -90,15 +103,20 @@ class G8ScopeServiceProvider extends ServiceProvider
         }
     }
 
-    /** Register the settings UI route — only when the host meets every requirement. */
+    /**
+     * Register the settings UI route — opt-in (g8scope.ui.enabled + DB settings),
+     * only when the host meets every requirement, and always behind the
+     * g8scope.ui.gate ability (undefined ability = denied).
+     */
     private function registerUi(): void
     {
-        if (! Requirements::uiAvailable($this->app)) {
+        $ui = (array) $this->app['config']->get('g8scope.ui', []);
+
+        if (! ($ui['enabled'] ?? false) || ! $this->dbSettingsEnabled() || ! Requirements::uiAvailable($this->app)) {
             return;
         }
 
-        $ui = (array) $this->app['config']->get('g8scope.ui', []);
-        Route::middleware($ui['middleware'] ?? ['web', 'auth'])
+        Route::middleware([...($ui['middleware'] ?? ['web', 'auth']), 'can:'.SettingsPage::ability()])
             ->get($ui['path'] ?? 'g8scope/settings', SettingsPage::class)
             ->name('g8scope.settings');
     }

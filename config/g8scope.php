@@ -18,6 +18,10 @@ return [
     'environment' => env('G8SCOPE_ENVIRONMENT', env('APP_ENV', 'production')),
     'release' => env('G8SCOPE_RELEASE'),
 
+    // Client-side sampling: share of events sent, 0.0–1.0 (per event, random).
+    // The ingest API applies its own server-side sampling on top.
+    'sample_rate' => env('G8SCOPE_SAMPLE_RATE', 1.0),
+
     // HTTP timeout (seconds) for the async send — kept short so a slow ingest
     // never affects the monitored app.
     'timeout' => env('G8SCOPE_TIMEOUT', 3),
@@ -44,10 +48,22 @@ return [
         MethodNotAllowedHttpException::class,
     ],
 
-    // Optional UI settings page (published only when Requirements::uiAvailable()).
+    // Optional DB-backed settings (spatie/laravel-settings). Off by default:
+    // config/env is the only source. When on, values stored in the `g8scope`
+    // settings group override config/env; an unmigrated group changes nothing.
+    'settings' => [
+        'enabled' => env('G8SCOPE_DB_SETTINGS', false),
+    ],
+
+    // Optional settings page. Off by default. Needs settings.enabled plus
+    // Livewire, Flux and spatie/laravel-settings. Every request is checked
+    // against `gate` — define it (Gate::define('manage-g8scope', ...)) or the
+    // page answers 403 to everyone.
     'ui' => [
+        'enabled' => env('G8SCOPE_UI_ENABLED', false),
         'path' => env('G8SCOPE_UI_PATH', 'g8scope/settings'),
         'middleware' => ['web', 'auth'],
+        'gate' => env('G8SCOPE_UI_GATE', 'manage-g8scope'),
     ],
 
     // Request context keys redacted before sending (client-side scrub).

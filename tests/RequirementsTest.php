@@ -10,7 +10,7 @@ it('reports each requirement', function (): void {
         ->and($report['laravel_11_plus'])->toBeTrue(); // Testbench is Laravel 11+
 });
 
-it('keeps the UI unavailable unless Flux + spatie-settings are present', function (): void {
-    // Bare Testbench has neither Flux nor spatie/laravel-settings installed.
-    expect(Requirements::uiAvailable())->toBeFalse();
+it('reports the UI prerequisites as met when Livewire, Flux + spatie-settings are installed', function (): void {
+    // Dev deps install all three; opting in is still separate (see SettingsUiTest).
+    expect(Requirements::uiAvailable())->toBeTrue();
 });

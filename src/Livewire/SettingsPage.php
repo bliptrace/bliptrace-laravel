@@ -7,6 +7,7 @@ namespace G8Scope\Laravel\Livewire;
 use Flux\Flux;
 use G8Scope\Laravel\Settings\G8ScopeSettings;
 use G8Scope\Laravel\Support\Requirements;
+use Illuminate\Support\Facades\Gate;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 
@@ -24,9 +25,16 @@ class SettingsPage extends Component
 
     public string $release = '';
 
+    /** Ability that guards the page (config g8scope.ui.gate). */
+    public static function ability(): string
+    {
+        return (string) config('g8scope.ui.gate', 'manage-g8scope');
+    }
+
     public function mount(): void
     {
         abort_unless(Requirements::uiAvailable(), 404);
+        abort_unless(Gate::allows(self::ability()), 403);
 
         $s = app(G8ScopeSettings::class);
         $this->enabled = $s->enabled;
@@ -38,6 +46,9 @@ class SettingsPage extends Component
 
     public function save(): void
     {
+        // Livewire updates hit /livewire/update, not this route — re-check.
+        abort_unless(Gate::allows(self::ability()), 403);
+
         $this->validate([
             'endpoint' => 'required|url',
             'environment' => 'required|string|max:255',
