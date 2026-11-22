@@ -1,7 +1,7 @@
 # g8scope/laravel
 
 Laravel SDK for [g8scope](https://scope.g8suite.com) — auto-captures exceptions and ships them to the
-ingest API. A thin adapter over [`g8scope/php`](../g8scope-php).
+ingest API. A thin adapter over [`g8scope/php`](../bliptrace-php).
 
 ## Install
 
