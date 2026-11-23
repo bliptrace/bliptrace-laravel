@@ -11,7 +11,7 @@
             <flux:input wire:model="key" label="Ingest key" type="password" viewable
                 placeholder="from the g8scope dashboard" description="Identifies your project. The project is resolved server-side from this key." />
 
-            <flux:input wire:model="endpoint" label="Ingest endpoint" placeholder="https://ingest.scope.g8suite.com" />
+            <flux:input wire:model="endpoint" label="Ingest endpoint" placeholder="https://ingest.bliptrace.com/v1/ingest" />
 
             <div class="grid gap-4 sm:grid-cols-2">
                 <flux:input wire:model="environment" label="Environment" placeholder="production" />

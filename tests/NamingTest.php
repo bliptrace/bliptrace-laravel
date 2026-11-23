@@ -53,7 +53,7 @@ it('uses the defaults when neither name is set', function (): void {
         'BLIPTRACE_UI_GATE' => null, 'G8SCOPE_UI_GATE' => null,
     ]);
 
-    expect($c['endpoint'])->toBe('https://ingest.scope.g8suite.com')
+    expect($c['endpoint'])->toBe('https://ingest.bliptrace.com/v1/ingest')
         ->and($c['timeout'])->toBe(3)
         ->and($c['ui']['gate'])->toBe('manage-g8scope');
 });

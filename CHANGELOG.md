@@ -6,6 +6,25 @@ format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the 
 
 ## [Unreleased]
 
+## [1.3.0] - 2026-11-23
+
+### Added
+- Automatic breadcrumbs, attached to the next reported error: HTTP request start (route matched),
+  executed queries (SQL text only, no bindings), log messages and queued job processing, all on
+  by default; cache misses, off by default. Toggles under `bliptrace.breadcrumbs.*`
+  (`BLIPTRACE_BREADCRUMBS_REQUESTS`, `_QUERIES`, `_LOGS`, `_JOBS`, `_CACHE`).
+- `max_breadcrumbs` (`BLIPTRACE_MAX_BREADCRUMBS`, default 50, `0` disables).
+- `tags` config: sent with every event.
+- The incoming W3C `traceparent` header is read into the envelope `trace`.
+- `Bliptrace::addBreadcrumb()`, `setTag()`, `setTags()`, `setTrace()` (also on `Reporter`).
+
+### Changed
+- Default endpoint is now `https://ingest.bliptrace.com/v1/ingest` (was
+  `https://ingest.scope.g8suite.com`) in the config, the settings defaults/migration and the
+  settings page placeholder. `BLIPTRACE_ENDPOINT` still overrides; a stored or configured base URL
+  keeps working.
+- Requires `bliptrace/php: ^1.3`.
+
 ## [1.2.0] - 2026-11-23
 
 ### Added
@@ -66,7 +85,8 @@ route and `manage-g8scope` gate defaults, and the envelope `sdk.name`.
 - Initial release as `g8scope/laravel`: exception-handler hook, deferred send, request context,
   facade, optional Livewire/Flux settings page.
 
-[Unreleased]: https://github.com/bliptrace/bliptrace-laravel/compare/1.2.0...HEAD
+[Unreleased]: https://github.com/bliptrace/bliptrace-laravel/compare/1.3.0...HEAD
+[1.3.0]: https://github.com/bliptrace/bliptrace-laravel/compare/1.2.0...1.3.0
 [1.2.0]: https://github.com/bliptrace/bliptrace-laravel/compare/1.1.0...1.2.0
 [1.1.0]: https://github.com/bliptrace/bliptrace-laravel/compare/1.0.0...1.1.0
 [1.0.0]: https://github.com/bliptrace/bliptrace-laravel/releases/tag/1.0.0

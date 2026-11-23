@@ -56,6 +56,7 @@ class G8ScopeServiceProvider extends ServiceProvider
         }
 
         $this->hookExceptionHandler();
+        $this->registerBreadcrumbs();
         $this->registerUi();
     }
 
@@ -130,6 +131,14 @@ class G8ScopeServiceProvider extends ServiceProvider
             $handler->reportable(function (Throwable $e): void {
                 $this->app->make(Reporter::class)->capture($e);
             });
+        }
+    }
+
+    private function registerBreadcrumbs(): void
+    {
+        $config = $this->app['config'];
+        if ($config->get('bliptrace.enabled') && $config->get('bliptrace.max_breadcrumbs', 50) > 0) {
+            (new Breadcrumbs($this->app))->register((array) $config->get('bliptrace.breadcrumbs', []));
         }
     }
 

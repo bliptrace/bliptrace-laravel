@@ -14,7 +14,7 @@ return [
 
     // Project ingest key (from the g8scope dashboard) + the ingest endpoint.
     'key' => env('BLIPTRACE_KEY', env('G8SCOPE_KEY')),
-    'endpoint' => env('BLIPTRACE_ENDPOINT', env('G8SCOPE_ENDPOINT', 'https://ingest.scope.g8suite.com')),
+    'endpoint' => env('BLIPTRACE_ENDPOINT', env('G8SCOPE_ENDPOINT', 'https://ingest.bliptrace.com/v1/ingest')),
 
     'environment' => env('BLIPTRACE_ENVIRONMENT', env('G8SCOPE_ENVIRONMENT', env('APP_ENV', 'production'))),
     'release' => env('BLIPTRACE_RELEASE', env('G8SCOPE_RELEASE')),
@@ -38,6 +38,21 @@ return [
     // Cap the number of stack frames + the message length sent.
     'max_frames' => env('BLIPTRACE_MAX_FRAMES', env('G8SCOPE_MAX_FRAMES', 30)),
     'max_message' => env('BLIPTRACE_MAX_MESSAGE', env('G8SCOPE_MAX_MESSAGE', 2000)),
+
+    // Breadcrumbs: the trail of events before an error, attached to its envelope.
+    // Kept in memory (newest max_breadcrumbs, 0 = off); data is scrubbed with
+    // scrub_keys before send. Queries record SQL text only, never bindings.
+    'max_breadcrumbs' => env('BLIPTRACE_MAX_BREADCRUMBS', 50),
+    'breadcrumbs' => [
+        'requests' => env('BLIPTRACE_BREADCRUMBS_REQUESTS', true),
+        'queries' => env('BLIPTRACE_BREADCRUMBS_QUERIES', true),
+        'logs' => env('BLIPTRACE_BREADCRUMBS_LOGS', true),
+        'jobs' => env('BLIPTRACE_BREADCRUMBS_JOBS', true),
+        'cache' => env('BLIPTRACE_BREADCRUMBS_CACHE', false), // cache misses
+    ],
+
+    // Tags sent with every event (string values), e.g. ['tenant' => 'umpsa'].
+    'tags' => [],
 
     // Exceptions never reported (noise). Add your own.
     'ignore_exceptions' => [

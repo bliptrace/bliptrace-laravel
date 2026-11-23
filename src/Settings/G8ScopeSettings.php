@@ -13,7 +13,7 @@ class G8ScopeSettings extends Settings
 
     public ?string $key = null;
 
-    public string $endpoint = 'https://ingest.scope.g8suite.com';
+    public string $endpoint = 'https://ingest.bliptrace.com/v1/ingest';
 
     public string $environment = 'production';
 
