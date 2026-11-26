@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-use G8Scope\Laravel\Facades\Bliptrace;
-use G8Scope\Laravel\Facades\G8Scope;
-use G8Scope\Laravel\Reporter;
+use Bliptrace\Laravel\BliptraceServiceProvider;
+use Bliptrace\Laravel\Facades\Bliptrace;
+use Bliptrace\Laravel\Reporter;
 
 /** Evaluate the package config file against the given env (null = unset). */
 function configWithEnv(array $env): array
@@ -55,7 +55,7 @@ it('uses the defaults when neither name is set', function (): void {
 
     expect($c['endpoint'])->toBe('https://ingest.bliptrace.com/v1/ingest')
         ->and($c['timeout'])->toBe(3)
-        ->and($c['ui']['gate'])->toBe('manage-g8scope');
+        ->and($c['ui']['gate'])->toBe('manage-bliptrace');
 });
 
 it('reads a legacy published config/g8scope.php when there is no config/bliptrace.php', function (): void {
@@ -75,7 +75,21 @@ it('prefers a published config/bliptrace.php over a legacy config/g8scope.php', 
     expect(sdkConfig()->key)->toBe('new-key');
 });
 
-it('resolves both the Bliptrace facade and the deprecated G8Scope facade', function (): void {
-    expect(Bliptrace::getFacadeRoot())->toBeInstanceOf(Reporter::class)
-        ->and(G8Scope::getFacadeRoot())->toBe(Bliptrace::getFacadeRoot());
+it('resolves the Bliptrace facade', function (): void {
+    expect(Bliptrace::getFacadeRoot())->toBeInstanceOf(Reporter::class);
+});
+
+it('resolves legacy G8Scope\\Laravel class names to the Bliptrace classes', function (): void {
+    set_error_handler(fn (): bool => true, E_USER_DEPRECATED);
+
+    try {
+        $facade = 'G8Scope\\Laravel\\Facades\\G8Scope';
+        $provider = 'G8Scope\\Laravel\\G8ScopeServiceProvider';
+
+        expect($facade::getFacadeRoot())->toBe(Bliptrace::getFacadeRoot())
+            ->and(new $provider(app()))->toBeInstanceOf(BliptraceServiceProvider::class)
+            ->and(class_exists('G8Scope\\Laravel\\Reporter'))->toBeTrue();
+    } finally {
+        restore_error_handler();
+    }
 });

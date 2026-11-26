@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace G8Scope\Laravel;
+namespace Bliptrace\Laravel;
 
-use G8Scope\Laravel\Context\RequestContext;
-use G8Scope\Php\Client;
+use Bliptrace\Laravel\Context\RequestContext;
+use Bliptrace\Php\Client;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Http\Request;
 use Throwable;

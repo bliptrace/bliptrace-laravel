@@ -2,20 +2,20 @@
 
 declare(strict_types=1);
 
-namespace G8Scope\Laravel;
+namespace Bliptrace\Laravel;
 
-use G8Scope\Laravel\Livewire\SettingsPage;
-use G8Scope\Laravel\Settings\G8ScopeSettings;
-use G8Scope\Laravel\Support\Requirements;
-use G8Scope\Php\Client;
-use G8Scope\Php\Config;
+use Bliptrace\Laravel\Livewire\SettingsPage;
+use Bliptrace\Laravel\Settings\BliptraceSettings;
+use Bliptrace\Laravel\Support\Requirements;
+use Bliptrace\Php\Client;
+use Bliptrace\Php\Config;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Spatie\LaravelSettings\Factories\SettingsRepositoryFactory;
 use Throwable;
 
-class G8ScopeServiceProvider extends ServiceProvider
+class BliptraceServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
@@ -27,7 +27,7 @@ class G8ScopeServiceProvider extends ServiceProvider
         if ($this->dbSettingsEnabled()) {
             $this->app['config']->set('settings.settings', array_merge(
                 (array) $this->app['config']->get('settings.settings', []),
-                [G8ScopeSettings::class],
+                [BliptraceSettings::class],
             ));
             $this->app['config']->set('settings.migrations_paths', array_merge(
                 (array) $this->app['config']->get('settings.migrations_paths', []),
@@ -41,10 +41,10 @@ class G8ScopeServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        $this->loadViewsFrom(__DIR__.'/../resources/views', 'g8scope');
+        $this->loadViewsFrom(__DIR__.'/../resources/views', 'bliptrace');
 
         if ($this->app->runningInConsole()) {
-            // g8scope-* tags are deprecated aliases (removed in 2.0); both publish config/bliptrace.php.
+            // Legacy shim: g8scope-* tags are deprecated aliases (removed in 3.0); both publish config/bliptrace.php.
             $config = [__DIR__.'/../config/bliptrace.php' => config_path('bliptrace.php')];
             $this->publishes($config, 'bliptrace-config');
             $this->publishes($config, 'g8scope-config');
@@ -62,7 +62,7 @@ class G8ScopeServiceProvider extends ServiceProvider
 
     /**
      * Merge package defaults under `bliptrace`. An app that still has only a
-     * published config/g8scope.php (deprecated, removed in 2.0) keeps it: its
+     * published config/g8scope.php (legacy shim, deprecated, removed in 3.0) keeps it: its
      * values are layered over the defaults. A published config/bliptrace.php wins.
      * `g8scope` is mirrored to the result so old config('g8scope.*') reads work.
      */
@@ -103,8 +103,8 @@ class G8ScopeServiceProvider extends ServiceProvider
 
         if ($this->dbSettingsEnabled()) {
             try {
-                $stored = SettingsRepositoryFactory::create(G8ScopeSettings::repository())
-                    ->getPropertiesInGroup(G8ScopeSettings::group());
+                $stored = SettingsRepositoryFactory::create(BliptraceSettings::repository())
+                    ->getPropertiesInGroup(BliptraceSettings::group());
                 foreach (['enabled', 'key', 'endpoint', 'environment', 'release'] as $name) {
                     if (isset($stored[$name]) && $stored[$name] !== '') {
                         $c[$name] = $stored[$name];
@@ -116,7 +116,7 @@ class G8ScopeServiceProvider extends ServiceProvider
         }
 
         $c['base_path'] = $this->app->basePath();
-        $c['sdk_name'] = 'g8scope-laravel';
+        $c['sdk_name'] = 'bliptrace-laravel';
 
         return Config::fromArray($c);
     }
@@ -156,7 +156,7 @@ class G8ScopeServiceProvider extends ServiceProvider
         }
 
         Route::middleware([...($ui['middleware'] ?? ['web', 'auth']), 'can:'.SettingsPage::ability()])
-            ->get($ui['path'] ?? 'g8scope/settings', SettingsPage::class)
-            ->name('g8scope.settings');
+            ->get($ui['path'] ?? 'bliptrace/settings', SettingsPage::class)
+            ->name('bliptrace.settings');
     }
 }

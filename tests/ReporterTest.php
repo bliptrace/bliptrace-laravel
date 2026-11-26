@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-use G8Scope\Laravel\Reporter;
-use G8Scope\Php\Client;
-use G8Scope\Php\Config;
-use G8Scope\Php\Transport\Transport;
+use Bliptrace\Laravel\Reporter;
+use Bliptrace\Php\Client;
+use Bliptrace\Php\Config;
+use Bliptrace\Php\Transport\Transport;
 
 final class FakeTransport implements Transport
 {
@@ -32,7 +32,7 @@ it('defers the send until the app terminates', function (): void {
     app()->terminate();
     expect($t->sent)->toHaveCount(1)
         ->and($t->sent[0]['envelope']['exception']['type'])->toBe('RuntimeException')
-        ->and($t->sent[0]['envelope']['sdk']['name'])->toBe('g8scope-php');
+        ->and($t->sent[0]['envelope']['sdk']['name'])->toBe('bliptrace-php');
 });
 
 it('publishes a config + registers the provider client', function (): void {

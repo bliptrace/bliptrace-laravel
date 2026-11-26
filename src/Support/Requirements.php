@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace G8Scope\Laravel\Support;
+namespace Bliptrace\Laravel\Support;
 
 use Flux\Flux;
 use Illuminate\Contracts\Foundation\Application;

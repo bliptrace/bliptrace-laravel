@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use G8Scope\Laravel\Support\Requirements;
+use Bliptrace\Laravel\Support\Requirements;
 
 it('reports each requirement', function (): void {
     $report = Requirements::report();

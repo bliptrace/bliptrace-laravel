@@ -36,7 +36,7 @@ handler) and shipped **after the response** so requests are never blocked. Noise
 ## Manual capture
 
 ```php
-use G8Scope\Laravel\Facades\Bliptrace;
+use Bliptrace\Laravel\Facades\Bliptrace;
 
 try { /* ... */ } catch (\Throwable $e) {
     Bliptrace::capture($e);
@@ -75,7 +75,7 @@ when an exception is reported during that request.
 Add your own from code:
 
 ```php
-use G8Scope\Laravel\Facades\Bliptrace;
+use Bliptrace\Laravel\Facades\Bliptrace;
 
 Bliptrace::addBreadcrumb('user', 'Clicked pay', ['plan' => 'pro'], category: 'ui');
 Bliptrace::setTag('tenant', $tenant->slug);
@@ -107,7 +107,7 @@ php artisan migrate           # seeds the g8scope group from your current .env v
 ```
 
 Once the group is migrated, its stored values win over `.env`, so changes made in the UI take effect
-live. Inspect the UI prerequisites with `G8Scope\Laravel\Support\Requirements::report()`.
+live. Inspect the UI prerequisites with `Bliptrace\Laravel\Support\Requirements::report()`.
 
 ## Upgrading from the `g8scope` names (deprecated, removed in 2.0)
 
@@ -120,7 +120,7 @@ live. Inspect the UI prerequisites with `G8Scope\Laravel\Support\Requirements::r
 | `--tag=g8scope-config` / `g8scope-settings-migrations` | `bliptrace-config` / `bliptrace-settings-migrations` | Old tags publish the same files |
 | `G8Scope` facade alias | `Bliptrace` | Old alias still registered |
 
-Unchanged: the PHP namespace (`G8Scope\Laravel`), the DB settings group (`g8scope`), the settings
+Unchanged: the PHP namespace (`Bliptrace\Laravel`), the DB settings group (`g8scope`), the settings
 route (`/g8scope/settings`, name `g8scope.settings`), the default gate (`manage-g8scope`) and the
 envelope's `sdk.name`. To migrate, rename your env vars, then
 `mv config/g8scope.php config/bliptrace.php` (or re-publish with `--tag=bliptrace-config`).

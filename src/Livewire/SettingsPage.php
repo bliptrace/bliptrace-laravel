@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace G8Scope\Laravel\Livewire;
+namespace Bliptrace\Laravel\Livewire;
 
+use Bliptrace\Laravel\Settings\BliptraceSettings;
+use Bliptrace\Laravel\Support\Requirements;
 use Flux\Flux;
-use G8Scope\Laravel\Settings\G8ScopeSettings;
-use G8Scope\Laravel\Support\Requirements;
 use Illuminate\Support\Facades\Gate;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 
 /** UI to configure the SDK. Only routed when Requirements::uiAvailable(). */
-#[Title('g8scope')]
+#[Title('Bliptrace')]
 class SettingsPage extends Component
 {
     public bool $enabled = true;
@@ -28,7 +28,7 @@ class SettingsPage extends Component
     /** Ability that guards the page (config bliptrace.ui.gate). */
     public static function ability(): string
     {
-        return (string) config('bliptrace.ui.gate', 'manage-g8scope');
+        return (string) config('bliptrace.ui.gate', 'manage-bliptrace');
     }
 
     public function mount(): void
@@ -36,7 +36,7 @@ class SettingsPage extends Component
         abort_unless(Requirements::uiAvailable(), 404);
         abort_unless(Gate::allows(self::ability()), 403);
 
-        $s = app(G8ScopeSettings::class);
+        $s = app(BliptraceSettings::class);
         $this->enabled = $s->enabled;
         $this->key = (string) $s->key;
         $this->endpoint = $s->endpoint;
@@ -56,7 +56,7 @@ class SettingsPage extends Component
             'release' => 'nullable|string|max:255',
         ]);
 
-        $s = app(G8ScopeSettings::class);
+        $s = app(BliptraceSettings::class);
         $s->enabled = $this->enabled;
         $s->key = $this->key !== '' ? $this->key : null;
         $s->endpoint = $this->endpoint;
@@ -64,13 +64,13 @@ class SettingsPage extends Component
         $s->release = $this->release !== '' ? $this->release : null;
         $s->save();
 
-        Flux::toast('g8scope settings saved.');
+        Flux::toast('Bliptrace settings saved.');
     }
 
     public function render()
     {
         $layout = config('livewire.component_layout', config('livewire.layout', 'components.layouts.app'));
 
-        return view('g8scope::livewire.settings')->layout($layout);
+        return view('bliptrace::livewire.settings')->layout($layout);
     }
 }

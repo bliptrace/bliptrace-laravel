@@ -1,6 +1,6 @@
 <div>
     <div class="mb-6">
-        <flux:heading size="xl">g8scope</flux:heading>
+        <flux:heading size="xl">Bliptrace</flux:heading>
         <flux:subheading>Where this app ships its errors. Settings here override the .env defaults.</flux:subheading>
     </div>
 
@@ -9,7 +9,7 @@
             <flux:switch wire:model="enabled" label="Enabled" description="Master kill switch for error capture." />
 
             <flux:input wire:model="key" label="Ingest key" type="password" viewable
-                placeholder="from the g8scope dashboard" description="Identifies your project. The project is resolved server-side from this key." />
+                placeholder="from the Bliptrace dashboard" description="Identifies your project. The project is resolved server-side from this key." />
 
             <flux:input wire:model="endpoint" label="Ingest endpoint" placeholder="https://ingest.bliptrace.com/v1/ingest" />
 

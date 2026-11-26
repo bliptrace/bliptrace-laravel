@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace G8Scope\Laravel\Settings;
+namespace Bliptrace\Laravel\Settings;
 
 use Spatie\LaravelSettings\Settings;
 
 /** DB-backed SDK settings (spatie/laravel-settings), editable via the UI page. */
-class G8ScopeSettings extends Settings
+class BliptraceSettings extends Settings
 {
     public bool $enabled = true;
 
@@ -21,6 +21,6 @@ class G8ScopeSettings extends Settings
 
     public static function group(): string
     {
-        return 'g8scope';
+        return 'bliptrace';
     }
 }

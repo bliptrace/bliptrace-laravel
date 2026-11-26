@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-use G8Scope\Laravel\G8ScopeServiceProvider;
-use G8Scope\Laravel\Tests\TestCase;
-use G8Scope\Php\Client;
-use G8Scope\Php\Config;
+use Bliptrace\Laravel\BliptraceServiceProvider;
+use Bliptrace\Laravel\Tests\TestCase;
+use Bliptrace\Php\Client;
+use Bliptrace\Php\Config;
 
 uses(TestCase::class)->in(__DIR__);
 
@@ -13,7 +13,7 @@ uses(TestCase::class)->in(__DIR__);
 function rebootSdk(array $config = []): void
 {
     config()->set($config);
-    $provider = new G8ScopeServiceProvider(app());
+    $provider = new BliptraceServiceProvider(app());
     $provider->register();
     $provider->boot();
     app('router')->getRoutes()->refreshNameLookups(); // routes added after boot

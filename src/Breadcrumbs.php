@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace G8Scope\Laravel;
+namespace Bliptrace\Laravel;
 
-use G8Scope\Php\Client;
+use Bliptrace\Php\Client;
 use Illuminate\Cache\Events\CacheMissed;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Database\Events\QueryExecuted;

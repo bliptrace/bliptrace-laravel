@@ -7,12 +7,12 @@ use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-// Every value reads BLIPTRACE_* first, then the deprecated G8SCOPE_* name (removed in 2.0).
+// Every value reads BLIPTRACE_* first, then the deprecated G8SCOPE_* name (removed in 3.0).
 return [
     // Master kill switch — set false to disable all capture.
     'enabled' => env('BLIPTRACE_ENABLED', env('G8SCOPE_ENABLED', true)),
 
-    // Project ingest key (from the g8scope dashboard) + the ingest endpoint.
+    // Project ingest key (from the Bliptrace dashboard) + the ingest endpoint.
     'key' => env('BLIPTRACE_KEY', env('G8SCOPE_KEY')),
     'endpoint' => env('BLIPTRACE_ENDPOINT', env('G8SCOPE_ENDPOINT', 'https://ingest.bliptrace.com/v1/ingest')),
 
@@ -65,7 +65,7 @@ return [
     ],
 
     // Optional DB-backed settings (spatie/laravel-settings). Off by default:
-    // config/env is the only source. When on, values stored in the `g8scope`
+    // config/env is the only source. When on, values stored in the `bliptrace`
     // settings group override config/env; an unmigrated group changes nothing.
     'settings' => [
         'enabled' => env('BLIPTRACE_DB_SETTINGS', env('G8SCOPE_DB_SETTINGS', false)),
@@ -73,13 +73,13 @@ return [
 
     // Optional settings page. Off by default. Needs settings.enabled plus
     // Livewire, Flux and spatie/laravel-settings. Every request is checked
-    // against `gate` — define it (Gate::define('manage-g8scope', ...)) or the
+    // against `gate` — define it (Gate::define('manage-bliptrace', ...)) or the
     // page answers 403 to everyone.
     'ui' => [
         'enabled' => env('BLIPTRACE_UI_ENABLED', env('G8SCOPE_UI_ENABLED', false)),
-        'path' => env('BLIPTRACE_UI_PATH', env('G8SCOPE_UI_PATH', 'g8scope/settings')),
+        'path' => env('BLIPTRACE_UI_PATH', env('G8SCOPE_UI_PATH', 'bliptrace/settings')),
         'middleware' => ['web', 'auth'],
-        'gate' => env('BLIPTRACE_UI_GATE', env('G8SCOPE_UI_GATE', 'manage-g8scope')),
+        'gate' => env('BLIPTRACE_UI_GATE', env('G8SCOPE_UI_GATE', 'manage-bliptrace')),
     ],
 
     // Request context keys redacted before sending (client-side scrub).

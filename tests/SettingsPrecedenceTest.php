@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use G8Scope\Laravel\Settings\G8ScopeSettings;
+use Bliptrace\Laravel\Settings\BliptraceSettings;
 use Illuminate\Support\Facades\DB;
 
 $env = [
@@ -11,11 +11,11 @@ $env = [
     'bliptrace.environment' => 'staging',
 ];
 
-function storeSettings(array $values): void
+function storeSettings(array $values, string $group = 'bliptrace'): void
 {
     foreach ($values as $name => $value) {
         DB::table('settings')->insert([
-            'group' => 'g8scope', 'name' => $name, 'locked' => false, 'payload' => json_encode($value),
+            'group' => $group, 'name' => $name, 'locked' => false, 'payload' => json_encode($value),
         ]);
     }
 }
@@ -27,7 +27,7 @@ it('ignores the DB settings layer by default, even with spatie installed', funct
 
     expect(sdkConfig()->endpoint)->toBe('http://from-env')
         ->and(sdkConfig()->enabled)->toBeFalse()
-        ->and(config('settings.settings'))->not->toContain(G8ScopeSettings::class);
+        ->and(config('settings.settings'))->not->toContain(BliptraceSettings::class);
 });
 
 it('keeps env when the layer is on but the group was never migrated', function () use ($env): void {
@@ -37,7 +37,7 @@ it('keeps env when the layer is on but the group was never migrated', function (
     expect(sdkConfig()->endpoint)->toBe('http://from-env')
         ->and(sdkConfig()->enabled)->toBeFalse()
         ->and(sdkConfig()->environment)->toBe('staging')
-        ->and(config('settings.settings'))->toContain(G8ScopeSettings::class);
+        ->and(config('settings.settings'))->toContain(BliptraceSettings::class);
 });
 
 it('keeps env when the layer is on but the settings table is missing', function () use ($env): void {
@@ -57,8 +57,21 @@ it('uses stored values over env once the group is migrated', function () use ($e
         ->and(sdkConfig()->key)->toBe('env-key');           // null stored value → env
 });
 
-it('passes G8SCOPE_SAMPLE_RATE through to the client', function (): void {
+it('passes sample_rate through to the client', function (): void {
     expect(sdkConfig()->sampleRate)->toBe(1.0);
     rebootSdk(['bliptrace.sample_rate' => '0.25']);
     expect(sdkConfig()->sampleRate)->toBe(0.25);
+});
+
+it('moves values stored under the legacy g8scope group to bliptrace on migrate', function (): void {
+    createSettingsTable();
+    storeSettings(['endpoint' => 'http://legacy-db', 'key' => 'legacy-key'], 'g8scope');
+    $dir = __DIR__.'/../database/settings/';
+    (include $dir.'2026_06_25_000000_create_bliptrace_settings.php')->up();
+    (include $dir.'2026_11_27_000000_rename_legacy_settings_group.php')->up();
+
+    $rows = DB::table('settings')->get()->groupBy('group');
+    expect($rows->keys()->all())->toBe(['bliptrace'])
+        ->and(json_decode($rows['bliptrace']->firstWhere('name', 'endpoint')->payload))->toBe('http://legacy-db')
+        ->and($rows['bliptrace'])->toHaveCount(5);
 });

@@ -1,9 +1,9 @@
 {
     "name": "bliptrace/laravel",
-    "description": "Laravel SDK for g8scope \u2014 auto-captures exceptions and ships them to the ingest API. Thin adapter over bliptrace/php.",
+    "description": "Laravel SDK for Bliptrace \u2014 auto-captures exceptions and ships them to the ingest API. Thin adapter over bliptrace/php.",
     "keywords": [
         "laravel",
-        "g8scope",
+        "bliptrace",
         "error-tracking",
         "observability",
         "sdk"
@@ -11,7 +11,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
-        "bliptrace/php": "^1.3",
+        "bliptrace/php": "^2.0",
         "illuminate/support": "^11.0|^12.0|^13.0"
     },
     "require-dev": {
@@ -24,12 +24,15 @@
     },
     "autoload": {
         "psr-4": {
-            "G8Scope\\Laravel\\": "src/"
-        }
+            "Bliptrace\\Laravel\\": "src/"
+        },
+        "files": [
+            "src/legacy-aliases.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {
-            "G8Scope\\Laravel\\Tests\\": "tests/"
+            "Bliptrace\\Laravel\\Tests\\": "tests/"
         }
     },
     "scripts": {
@@ -39,11 +42,11 @@
     "extra": {
         "laravel": {
             "providers": [
-                "G8Scope\\Laravel\\G8ScopeServiceProvider"
+                "Bliptrace\\Laravel\\BliptraceServiceProvider"
             ],
             "aliases": {
-                "Bliptrace": "G8Scope\\Laravel\\Facades\\Bliptrace",
-                "G8Scope": "G8Scope\\Laravel\\Facades\\G8Scope"
+                "Bliptrace": "Bliptrace\\Laravel\\Facades\\Bliptrace",
+                "G8Scope": "Bliptrace\\Laravel\\Facades\\Bliptrace"
             }
         }
     },
@@ -52,7 +55,10 @@
             "type": "path",
             "url": "../bliptrace-php",
             "options": {
-                "symlink": true
+                "symlink": true,
+                "versions": {
+                    "bliptrace/php": "2.0.0"
+                }
             }
         }
     ],

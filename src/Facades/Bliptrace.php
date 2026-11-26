@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace G8Scope\Laravel\Facades;
+namespace Bliptrace\Laravel\Facades;
 
-use G8Scope\Laravel\Reporter;
+use Bliptrace\Laravel\Reporter;
 use Illuminate\Support\Facades\Facade;
 
 /**

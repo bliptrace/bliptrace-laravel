@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace G8Scope\Laravel\Context;
+namespace Bliptrace\Laravel\Context;
 
 use Illuminate\Contracts\Foundation\Application;
 
